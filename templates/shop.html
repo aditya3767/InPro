@@ -1,0 +1,2823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bharkadevi Icecream - Shop Profit Analysis</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@2.2.1/dist/chartjs-plugin-annotation.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+    <style>
+        :root {
+            --primary: #FF6B8B;
+            --primary-dark: #E55A7B;
+            --primary-light: #FFE4EC;
+            --secondary: #6C5CE7;
+            --accent: #FFC312;
+            --success: #0F9D58;
+            --danger: #EA4335;
+            --warning: #F39C12;
+            --info: #17A2B8;
+            --light: #F8F9FA;
+            --dark: #2D3436;
+            --gray: #6C757D;
+            --light-gray: #E9ECEF;
+            --white: #FFFFFF;
+            --sidebar-width: 280px;
+            --header-height: 80px;
+            --border-radius: 20px;
+            --box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --gradient-primary: linear-gradient(135deg, #FF6B8B 0%, #FF8E53 100%);
+            --gradient-secondary: linear-gradient(135deg, #6C5CE7 0%, #8E44AD 100%);
+            --gradient-success: linear-gradient(135deg, #0F9D58 0%, #00C853 100%);
+            --gradient-danger: linear-gradient(135deg, #EA4335 0%, #FF5252 100%);
+            --gradient-warning: linear-gradient(135deg, #F39C12 0%, #FFC107 100%);
+            --gradient-info: linear-gradient(135deg, #17A2B8 0%, #00BCD4 100%);
+            --gradient-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-sidebar: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            --gradient-card: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+            --gradient-chart: linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(248,249,250,0.7) 100%);
+            --glass-effect: rgba(255, 255, 255, 0.25);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.18);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: var(--gradient-bg);
+            color: var(--dark);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        .container {
+            display: flex;
+            min-height: 100vh;
+            position: relative;
+        }
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--gradient-sidebar);
+            color: var(--white);
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--glass-shadow);
+            z-index: 1000;
+            transition: var(--transition);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        .logo {
+            text-align: center;
+            padding: 25px 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        .logo h1 {
+            font-size: 23px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .logo span {
+            color: var(--accent);
+            font-weight: 800;
+        }
+        .logo p {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+        .menu-item {
+            padding: 16px 25px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition);
+            border-left: 4px solid transparent;
+            margin: 4px 12px;
+            border-radius: 12px;
+        }
+        .menu-item:hover, .menu-item.active {
+            background: rgba(255, 255, 255, 0.15);
+            border-left: 4px solid var(--accent);
+            transform: translateX(5px);
+        }
+        .menu-item i {
+            margin-right: 15px;
+            font-size: 20px;
+            width: 24px;
+            text-align: center;
+            color: var(--accent);
+        }
+        .menu-item span {
+            font-weight: 500;
+            font-size: 15px;
+        }
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            margin-left: var(--sidebar-width);
+            width: calc(100% - var(--sidebar-width));
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            background: var(--glass-effect);
+            backdrop-filter: blur(20px);
+            height: var(--header-height);
+            z-index: 100;
+            margin: 15px;
+            margin-top: 10px;
+            border-radius: var(--border-radius);
+            border: var(--glass-border);
+            transition: var(--transition);
+            box-shadow: var(--box-shadow);
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        .user-info .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 22px;
+            font-weight: 600;
+            margin-right: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        /* Content Area */
+        .content {
+            padding: 30px;
+            overflow-y: auto;
+            flex: 1;
+        }
+        .card {
+            background: var(--gradient-card);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 28px;
+            margin-bottom: 30px;
+            border: var(--glass-border);
+            backdrop-filter: blur(10px);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        .card-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .card-title i {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+        }
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .filter-group label {
+            font-weight: 600;
+            color: var(--dark);
+        }
+        .form-control {
+            padding: 12px 15px;
+            border: 2px solid var(--light-gray);
+            border-radius: 12px;
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.9);
+            transition: var(--transition);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 2px 15px rgba(255, 107, 139, 0.2);
+            transform: translateY(-2px);
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 700;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+        .btn:hover::before {
+            left: 100%;
+        }
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: var(--white);
+        }
+        .btn-secondary {
+            background: var(--gradient-secondary);
+            color: var(--white);
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        /* Summary Cards */
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .summary-card {
+            background: var(--gradient-card);
+            border-radius: var(--border-radius);
+            padding: 25px 20px;
+            text-align: center;
+            box-shadow: var(--box-shadow);
+            border: var(--glass-border);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        .summary-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+        .summary-card:nth-child(1)::before { background: var(--gradient-success); }
+        .summary-card:nth-child(2)::before { background: var(--gradient-danger); }
+        .summary-card:nth-child(3)::before { background: var(--gradient-primary); }
+        .summary-card:nth-child(4)::before { background: var(--gradient-info); }
+        .summary-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        .summary-icon {
+            font-size: 28px;
+            margin-bottom: 15px;
+            display: inline-block;
+            padding: 12px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.05);
+        }
+        .summary-value {
+            font-size: 24px;
+            font-weight: 800;
+            margin: 8px 0;
+        }
+        .income-value { color: var(--success); }
+        .expense-value { color: var(--danger); }
+        .profit-value { color: var(--primary); }
+        .margin-value { color: var(--info); }
+        .summary-label {
+            font-size: 14px;
+            color: var(--gray);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .rupee-symbol::before {
+            content: "₹";
+            font-family: inherit;
+        }
+        /* Charts Grid */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        .chart-container {
+            background: var(--gradient-chart);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--box-shadow);
+            position: relative;
+            min-height: 400px;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            border: var(--glass-border);
+        }
+        .chart-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        .chart-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--primary);
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .chart-wrapper {
+            flex: 1;
+            position: relative;
+        }
+        /* Date Picker */
+        .date-picker {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .date-mode {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+        .date-mode label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.7);
+            transition: var(--transition);
+        }
+        .date-mode label:hover {
+            background: rgba(255, 255, 255, 0.9);
+        }
+        .date-mode input[type="radio"]:checked + span {
+            color: var(--primary);
+            font-weight: 700;
+        }
+        .date-input-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .date-input {
+            padding: 12px 15px;
+            border: 2px solid var(--light-gray);
+            border-radius: 12px;
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.9);
+            transition: var(--transition);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        .date-input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 2px 15px rgba(255, 107, 139, 0.2);
+            transform: translateY(-2px);
+        }
+        /* Full Screen Modal */
+        .modal-fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 3000;
+            display: none;
+            flex-direction: column;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .modal-fullscreen.active {
+            display: flex;
+            opacity: 1;
+        }
+        .fullscreen-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 25px;
+            background: var(--gradient-primary);
+            color: white;
+            border-radius: var(--border-radius);
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        .fullscreen-title {
+            font-size: 32px;
+            font-weight: 800;
+        }
+        .fullscreen-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        .fullscreen-chart-container {
+            flex: 1;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--box-shadow);
+            display: flex;
+            flex-direction: column;
+        }
+        .fullscreen-chart-title {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: var(--primary);
+            text-align: center;
+        }
+        .fullscreen-chart-wrapper {
+            flex: 1;
+            position: relative;
+        }
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--white);
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 4000;
+            color: white;
+            font-size: 20px;
+            flex-direction: column;
+            gap: 20px;
+            display: none;
+            backdrop-filter: blur(10px);
+        }
+        .loading-overlay.active {
+            display: flex;
+        }
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--accent);
+            animation: spin 1s ease-in-out infinite;
+        }
+        /* Chart Enhancements */
+        .chart-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .chart-action-btn {
+            padding: 6px 12px;
+            background: var(--gradient-secondary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        .chart-action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(108, 92, 231, 0.3);
+        }
+        /* Profit Indicator */
+        .profit-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .profit-positive {
+            background: rgba(15, 157, 88, 0.1);
+            color: var(--success);
+        }
+        .profit-negative {
+            background: rgba(234, 67, 53, 0.1);
+            color: var(--danger);
+        }
+        /* Button Container */
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        /* Responsive Design */
+        @media (max-width: 1400px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 1200px) {
+            .summary-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 80px;
+            }
+            .sidebar .logo h1 span, .sidebar .menu-item span {
+                display: none;
+            }
+            .sidebar .logo h1 {
+                font-size: 18px;
+            }
+            .sidebar .menu-item {
+                justify-content: center;
+                padding: 15px;
+            }
+            .sidebar .menu-item i {
+                margin-right: 0;
+            }
+            .main-content {
+                margin-left: 80px;
+                width: calc(100% - 80px);
+            }
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+            .menu-items {
+                display: flex;
+                overflow-x: auto;
+            }
+            .menu-item {
+                flex-direction: column;
+                padding: 12px;
+                min-width: 80px;
+            }
+            .menu-item i {
+                margin-right: 0;
+                margin-bottom: 5px;
+            }
+            .summary-cards {
+                grid-template-columns: 1fr;
+            }
+            .chart-container {
+                min-height: 300px;
+            }
+            .date-picker {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .date-mode {
+                justify-content: flex-start;
+            }
+            .date-input-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+        /* Notification Styles */
+        .notification-bell {
+            position: relative;
+            margin-right: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .notification-bell i {
+            font-size: 24px;
+            color: var(--primary);
+            filter: drop-shadow(0 2px 5px rgba(255, 107, 139, 0.3));
+            transition: var(--transition);
+        }
+        .notification-bell:hover i {
+            color: var(--primary-dark);
+            transform: scale(1.1) rotate(10deg);
+            filter: drop-shadow(0 2px 8px rgba(255, 107, 139, 0.5));
+        }
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--gradient-danger);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(234, 67, 53, 0.4);
+            animation: badgePulse 1.5s ease-in-out infinite;
+        }
+        @keyframes badgePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        .notification-dropdown {
+            position: absolute;
+            top: 60px;
+            right: 0;
+            background: var(--gradient-card);
+            backdrop-filter: blur(20px);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            width: 350px;
+            z-index: 1000;
+            display: none;
+            border: var(--glass-border);
+            overflow: hidden;
+        }
+        .notification-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--light-gray);
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 0.5px;
+            background: var(--glass-effect);
+            position: relative;
+            overflow: hidden;
+        }
+        .notification-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: var(--transition);
+        }
+        .notification-header:hover::before {
+            left: 100%;
+        }
+        .notification-content {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .notification-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--light-gray);
+            transition: var(--transition);
+            position: relative;
+        }
+        .notification-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--gradient-secondary);
+            opacity: 0;
+            transition: var(--transition);
+        }
+        .notification-item:hover {
+            background: var(--light);
+            transform: translateX(5px);
+        }
+        .notification-item:hover::before {
+            opacity: 1;
+        }
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+        .notification-date {
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 5px;
+            letter-spacing: 0.3px;
+        }
+        .notification-message {
+            color: var(--gray);
+            font-size: 14px;
+        }
+        .no-notifications {
+            padding: 20px;
+            text-align: center;
+            color: var(--gray);
+        }
+        .no-notifications i {
+            font-size: 48px;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+            animation: checkSpin 2s linear infinite;
+        }
+        @keyframes checkSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Custom Scrollbar Styles */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(var(--primary), var(--secondary));
+            border-radius: 10px;
+            transition: var(--transition);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(var(--primary-dark), var(--secondary));
+            transform: scale(1.1);
+        }
+        /* Shop Filter Section */
+        .shop-filter-section {
+            background: var(--gradient-card);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            border: var(--glass-border);
+            box-shadow: var(--box-shadow);
+        }
+        .shop-filter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .shop-filter-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .current-shop-display {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .shop-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .shop-btn {
+            padding: 10px 20px;
+            border: 2px solid var(--primary);
+            border-radius: 25px;
+            background: transparent;
+            color: var(--primary);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+        }
+        .shop-btn:hover, .shop-btn.active {
+            background: var(--gradient-primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+        .date-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .date-selector label {
+            font-weight: 700;
+            color: var(--dark);
+            letter-spacing: 0.5px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .date-selector input {
+            padding: 8px 12px;
+            border: 2px solid var(--light-gray);
+            border-radius: 8px;
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(5px);
+            transition: var(--transition);
+        }
+        .date-selector input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(255, 107, 139, 0.1), var(--glass-shadow);
+            background: var(--white);
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+<body onload="initializeShopAnalysis()">
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div>Loading Shop Profit Analytics...</div>
+    </div>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <h1><i class="fas fa-ice-cream"></i> Bharkadevi<span>Icecream</span></h1>
+                <p>Daily Transaction Manager</p>
+            </div>
+            <div class="menu-items">
+                <div class="menu-item" onclick="window.location.href='/dashboard'">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </div>
+                <div class="menu-item" onclick="window.location.href='/income'">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span>Income Entry</span>
+                </div>
+                <div class="menu-item" onclick="window.location.href='/expense'">
+                    <i class="fas fa-receipt"></i>
+                    <span>Expense Entry</span>
+                </div>
+                <div class="menu-item" onclick="window.location.href='/reports'">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Reports</span>
+                </div>
+                <div class="menu-item" onclick="window.location.href='/profit'">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Profit Analysis</span>
+                </div>
+                <div class="menu-item active" onclick="window.location.href='/shop'">
+                    <i class="fas fa-building"></i>
+                    <span>Shop Profit</span>
+                </div>
+                <div class="menu-item" onclick="window.location.href='/history'">
+                    <i class="fas fa-history"></i>
+                    <span>Transaction History</span>
+                </div>
+                <div class="menu-item" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </div>
+            </div>
+        </div>
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <div class="date-selector">
+                    <label for="selectedDate">Select Date:</label>
+                    <input type="date" id="selectedDate" onchange="loadDataForSelectedDate()">
+                </div>
+                <div style="display: flex; align-items: center;">
+                    <div class="notification-bell" onclick="toggleNotifications()">
+                        <i class="fas fa-bell"></i>
+                        <div class="notification-badge" id="notificationBadge" style="display: none;">0</div>
+                    </div>
+                    <div class="user-info">
+                        <div class="avatar">ST</div>
+                        <div>
+                            <h4>Smita Thakare</h4>
+                            <p>Owner</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Notification Dropdown -->
+            <div class="notification-dropdown" id="notificationDropdown">
+                <div class="notification-header">
+                    <i class="fas fa-bell"></i> Notifications
+                </div>
+                <div class="notification-content" id="notificationContent">
+                    <!-- Notifications will be populated here -->
+                </div>
+            </div>
+            <!-- Content Area -->
+            <div class="content">
+                <!-- Shop Filter Section -->
+                <div class="shop-filter-section">
+                    <div class="shop-filter-header">
+                        <div class="shop-filter-title">
+                            <i class="fas fa-store"></i> Shop Filter
+                        </div>
+                        <div id="currentShopDisplay" class="current-shop-display" style="display: none;">
+                            Viewing: <span id="currentShopName">All Shops</span>
+                        </div>
+                    </div>
+                    <div class="shop-buttons" id="shopButtons">
+                        <!-- Shop buttons will be populated here -->
+                    </div>
+                </div>
+                <!-- Date Selection -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fas fa-calendar-alt"></i> Select Date Range</h2>
+                    </div>
+                    <div class="date-picker">
+                        <div class="date-mode">
+                            <label>
+                                <input type="radio" name="dateMode" value="range" checked>
+                                <span>Date Range</span>
+                            </label>
+                            <label>
+                                <input type="radio" name="dateMode" value="single">
+                                <span>Single Date</span>
+                            </label>
+                            <label>
+                                <input type="radio" name="dateMode" value="month">
+                                <span>Entire Month</span>
+                            </label>
+                        </div>
+                        <div id="rangeInputs" class="date-input-group">
+                            <label for="startDate">From:</label>
+                            <input type="date" id="startDate" class="date-input">
+                            <label for="endDate">To:</label>
+                            <input type="date" id="endDate" class="date-input">
+                        </div>
+                        <div id="singleInput" class="date-input-group" style="display: none;">
+                            <label for="singleDate">Date:</label>
+                            <input type="date" id="singleDate" class="date-input">
+                        </div>
+                        <div id="monthInput" class="date-input-group" style="display: none;">
+                            <label for="monthSelect">Month:</label>
+                            <select id="monthSelect" class="date-input">
+                                <option value="1">January</option>
+                                <option value="2">February</option>
+                                <option value="3">March</option>
+                                <option value="4">April</option>
+                                <option value="5">May</option>
+                                <option value="6">June</option>
+                                <option value="7">July</option>
+                                <option value="8">August</option>
+                                <option value="9">September</option>
+                                <option value="10">October</option>
+                                <option value="11">November</option>
+                                <option value="12">December</option>
+                            </select>
+                            <label for="yearSelect">Year:</label>
+                            <select id="yearSelect" class="date-input">
+                                <!-- Years will be populated by JavaScript -->
+                            </select>
+                        </div>
+                        <div class="button-container">
+                            <button class="btn btn-primary" onclick="loadDataForDateRange()">
+                                <i class="fas fa-sync-alt"></i> Load Analytics
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Quick Stats -->
+                <div class="summary-cards">
+                    <div class="summary-card">
+                        <div class="summary-icon" style="color: var(--success);">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <div class="summary-value rupee-symbol income-value" id="totalIncome">0.00</div>
+                        <div class="summary-label">Total Income</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-icon" style="color: var(--danger);">
+                            <i class="fas fa-receipt"></i>
+                        </div>
+                        <div class="summary-value rupee-symbol expense-value" id="totalExpense">0.00</div>
+                        <div class="summary-label">Total Expenses</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-icon" style="color: var(--primary);">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="summary-value rupee-symbol profit-value" id="netProfit">0.00</div>
+                        <div class="summary-label">Net Profit</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-icon" style="color: var(--info);">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                        <div class="summary-value margin-value" id="profitMargin">0%</div>
+                        <div class="summary-label">Profit Margin</div>
+                    </div>
+                </div>
+                <!-- Charts -->
+                <div class="charts-grid">
+                    <!-- Chart 1: Shop Profit Comparison -->
+                    <div class="chart-container">
+                        <div class="chart-title">
+                            <span><i class="fas fa-chart-bar"></i> Shop Profit Comparison</span>
+                            <div class="chart-actions">
+                                <button class="chart-action-btn" onclick="openFullscreenChart('shopProfitChart')">
+                                    <i class="fas fa-expand"></i> Full Screen
+                                </button>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="shopProfitChart"></canvas>
+                        </div>
+                    </div>
+                    <!-- Chart 2: Shop Income vs Expense Analysis -->
+                    <div class="chart-container">
+                        <div class="chart-title">
+                            <span><i class="fas fa-balance-scale"></i> Shop Income vs Expense Analysis</span>
+                            <div class="chart-actions">
+                                <button class="chart-action-btn" onclick="openFullscreenChart('shopIncomeExpenseChart')">
+                                    <i class="fas fa-expand"></i> Full Screen
+                                </button>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="shopIncomeExpenseChart"></canvas>
+                        </div>
+                    </div>
+                    <!-- Chart 3: Shop Profit Distribution -->
+                    <div class="chart-container">
+                        <div class="chart-title">
+                            <span><i class="fas fa-chart-pie"></i> Shop Profit Distribution</span>
+                            <div class="chart-actions">
+                                <button class="chart-action-btn" onclick="openFullscreenChart('shopProfitDistributionChart')">
+                                    <i class="fas fa-expand"></i> Full Screen
+                                </button>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="shopProfitDistributionChart"></canvas>
+                        </div>
+                    </div>
+                    <!-- Chart 4: Shop Performance Trend -->
+                    <div class="chart-container">
+                        <div class="chart-title">
+                            <span><i class="fas fa-chart-line"></i> Shop Performance Trend</span>
+                            <div class="chart-actions">
+                                <button class="chart-action-btn" onclick="openFullscreenChart('shopPerformanceChart')">
+                                    <i class="fas fa-expand"></i> Full Screen
+                                </button>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="shopPerformanceChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Full Screen Modal -->
+    <div class="modal-fullscreen" id="fullscreenModal">
+        <div class="fullscreen-header">
+            <h2 class="fullscreen-title" id="fullscreenTitle">Shop Profit Analysis</h2>
+            <button class="btn btn-secondary" onclick="closeFullscreenChart()">
+                <i class="fas fa-times"></i> Close
+            </button>
+        </div>
+        <div class="fullscreen-body">
+            <div class="fullscreen-chart-container">
+                <div class="fullscreen-chart-title" id="fullscreenChartTitle">Shop Profit Analysis</div>
+                <div class="fullscreen-chart-wrapper">
+                    <canvas id="fullscreenChartCanvas"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // API base URL
+        const API_BASE = '/api';
+        let charts = {};
+        let currentData = {};
+        let currentDateMode = 'range';
+        let currentShop = null;
+        let availableShops = [];
+        // Initialize the application
+        async function initializeShopAnalysis() {
+            // Set default date range to current month
+            const today = new Date();
+            const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+            const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+            document.getElementById('startDate').valueAsDate = firstDay;
+            document.getElementById('endDate').valueAsDate = lastDay;
+            document.getElementById('singleDate').valueAsDate = today;
+            document.getElementById('selectedDate').value = today.toISOString().split('T')[0];
+            // Set current month and year
+            document.getElementById('monthSelect').value = today.getMonth() + 1;
+            // Populate years (last 5 years)
+            const yearSelect = document.getElementById('yearSelect');
+            const currentYear = today.getFullYear();
+            for (let i = currentYear - 2; i <= currentYear + 2; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = i;
+                if (i === currentYear) option.selected = true;
+                yearSelect.appendChild(option);
+            }
+            // Load shops and notifications
+            await loadShops();
+            await loadNotifications();
+            // Load initial data
+            loadDataForDateRange();
+            // Add event listeners for date mode toggle
+            document.querySelectorAll('input[name="dateMode"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    currentDateMode = this.value;
+                    toggleDateInputs();
+                });
+            });
+        }
+        // Load available shops
+        async function loadShops() {
+            try {
+                const response = await fetch(`${API_BASE}/shops/with-income`);
+                availableShops = await response.json();
+                populateShopButtons();
+            } catch (error) {
+                console.error('Error loading shops:', error);
+                availableShops = ['Ulhasnagar', 'Kalyan', 'Varap', 'Varap (kulfee)'];
+                populateShopButtons();
+            }
+        }
+        // Populate shop filter buttons
+        function populateShopButtons() {
+            const shopButtons = document.getElementById('shopButtons');
+            // Add "All Shops" button
+            const allShopsBtn = document.createElement('button');
+            allShopsBtn.className = 'shop-btn active';
+            allShopsBtn.innerHTML = '<i class="fas fa-layer-group"></i> All Shops';
+            allShopsBtn.onclick = () => filterByShop(null);
+            shopButtons.appendChild(allShopsBtn);
+            // Add individual shop buttons
+            availableShops.forEach(shop => {
+                const shopBtn = document.createElement('button');
+                shopBtn.className = 'shop-btn';
+                shopBtn.innerHTML = `<i class="fas fa-store"></i> ${shop}`;
+                shopBtn.onclick = () => filterByShop(shop);
+                shopButtons.appendChild(shopBtn);
+            });
+        }
+        // Filter by shop
+        function filterByShop(shopName) {
+            currentShop = shopName;
+            // Update button states
+            document.querySelectorAll('.shop-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            if (shopName === null) {
+                document.querySelectorAll('.shop-btn')[0].classList.add('active');
+                document.getElementById('currentShopDisplay').style.display = 'none';
+            } else {
+                // Find and activate the correct button
+                const buttons = document.querySelectorAll('.shop-btn');
+                for (let btn of buttons) {
+                    if (btn.textContent.trim().includes(shopName)) {
+                        btn.classList.add('active');
+                        break;
+                    }
+                }
+                document.getElementById('currentShopName').textContent = shopName;
+                document.getElementById('currentShopDisplay').style.display = 'block';
+            }
+            loadDataForDateRange();
+        }
+        // Toggle date inputs based on mode
+        function toggleDateInputs() {
+            const rangeInputs = document.getElementById('rangeInputs');
+            const singleInput = document.getElementById('singleInput');
+            const monthInput = document.getElementById('monthInput');
+            rangeInputs.style.display = 'none';
+            singleInput.style.display = 'none';
+            monthInput.style.display = 'none';
+            if (currentDateMode === 'range') {
+                rangeInputs.style.display = 'flex';
+            } else if (currentDateMode === 'single') {
+                singleInput.style.display = 'flex';
+            } else if (currentDateMode === 'month') {
+                monthInput.style.display = 'flex';
+            }
+        }
+        // Load data for selected date from header
+        function loadDataForSelectedDate() {
+            const selectedDate = document.getElementById('selectedDate').value;
+            if (selectedDate) {
+                document.getElementById('singleDate').value = selectedDate;
+                currentDateMode = 'single';
+                toggleDateInputs();
+                loadDataForDateRange();
+            }
+        }
+        // Show loading overlay
+        function showLoading() {
+            document.getElementById('loadingOverlay').classList.add('active');
+        }
+        // Hide loading overlay
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.remove('active');
+        }
+        // Load data for selected date range from MongoDB
+        async function loadDataForDateRange() {
+            let startDate, endDate;
+            if (currentDateMode === 'single') {
+                const singleDate = document.getElementById('singleDate').value;
+                if (!singleDate) {
+                    alert('Please select a date');
+                    return;
+                }
+                startDate = singleDate;
+                endDate = singleDate;
+            } else if (currentDateMode === 'month') {
+                const month = document.getElementById('monthSelect').value;
+                const year = document.getElementById('yearSelect').value;
+                startDate = `${year}-${month.padStart(2, '0')}-01`;
+                const lastDay = new Date(year, month, 0).getDate();
+                endDate = `${year}-${month.padStart(2, '0')}-${lastDay}`;
+            } else {
+                startDate = document.getElementById('startDate').value;
+                endDate = document.getElementById('endDate').value;
+                if (!startDate || !endDate) {
+                    alert('Please select both start and end dates');
+                    return;
+                }
+            }
+            showLoading();
+            try {
+                // If a specific shop is selected, use shop-wise endpoint
+                if (currentShop) {
+                    const response = await fetch(`${API_BASE}/reports/shop-wise?start_date=${startDate}&end_date=${endDate}&shop_name=${encodeURIComponent(currentShop)}`);
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch data: ${response.status} ${response.statusText}`);
+                    }
+                    const shopData = await response.json();
+                    currentData = {
+                        shop_data: shopData,
+                        total_income: shopData.total_income || 0,
+                        total_expense: shopData.total_expense || 0,
+                        net_profit: shopData.net_profit || 0,
+                        profit_margin: shopData.total_income > 0 ? (shopData.net_profit / shopData.total_income) * 100 : 0,
+                        shops: { [currentShop]: shopData },
+                        daily_breakdown: shopData.daily_breakdown || {},
+                        expense_by_category: shopData.expense_by_category || {}
+                    };
+                } else {
+                    // For all shops, fetch data for each shop individually
+                    const shopDataPromises = availableShops.map(async shop => {
+                        try {
+                            const response = await fetch(`${API_BASE}/reports/shop-wise?start_date=${startDate}&end_date=${endDate}&shop_name=${encodeURIComponent(shop)}`);
+                            if (response.ok) {
+                                const data = await response.json();
+                                return { shop, data };
+                            }
+                        } catch (error) {
+                            console.error(`Error fetching data for ${shop}:`, error);
+                        }
+                        return null;
+                    });
+                    const shopDataResults = await Promise.all(shopDataPromises);
+                    const validShopData = shopDataResults.filter(result => result !== null);
+                    // Aggregate data for all shops
+                    currentData = aggregateShopData(validShopData);
+                }
+                // Update summary cards
+                updateSummaryCards(currentData);
+                // Update charts
+                updateCharts(currentData);
+            } catch (error) {
+                console.error('Error loading data:', error);
+                // Use sample data if API fails
+                const sampleData = generateSampleData(startDate, endDate);
+                currentData = sampleData;
+                updateSummaryCards(sampleData);
+                updateCharts(sampleData);
+            } finally {
+                hideLoading();
+            }
+        }
+        // Aggregate data from multiple shops
+        function aggregateShopData(shopDataArray) {
+            const aggregatedData = {
+                total_income: 0,
+                total_expense: 0,
+                net_profit: 0,
+                profit_margin: 0,
+                shops: {}
+            };
+            shopDataArray.forEach(({ shop, data }) => {
+                aggregatedData.shops[shop] = data;
+                aggregatedData.total_income += data.total_income || 0;
+                aggregatedData.total_expense += data.total_expense || 0;
+            });
+            aggregatedData.net_profit = aggregatedData.total_income - aggregatedData.total_expense;
+            aggregatedData.profit_margin = aggregatedData.total_income > 0 ?
+                (aggregatedData.net_profit / aggregatedData.total_income) * 100 : 0;
+            return aggregatedData;
+        }
+        // Generate sample data for demonstration
+        function generateSampleData(startDate, endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            const daysDiff = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+            // Generate sample shop data
+            const shops = {
+                'Ulhasnagar': { total_income: 150000, total_expense: 75000, net_profit: 75000 },
+                'Kalyan': { total_income: 120000, total_expense: 60000, net_profit: 60000 },
+                'Varap': { total_income: 180000, total_expense: 90000, net_profit: 90000 },
+                'Varap (kulfee)': { total_income: 90000, total_expense: 45000, net_profit: 45000 }
+            };
+            const totalIncome = Object.values(shops).reduce((sum, shop) => sum + shop.total_income, 0);
+            const totalExpense = Object.values(shops).reduce((sum, shop) => sum + shop.total_expense, 0);
+            const netProfit = totalIncome - totalExpense;
+            const profitMargin = totalIncome > 0 ? (netProfit / totalIncome) * 100 : 0;
+            return {
+                total_income: totalIncome,
+                total_expense: totalExpense,
+                net_profit: netProfit,
+                profit_margin: profitMargin,
+                shops: shops
+            };
+        }
+        // Update summary cards
+        function updateSummaryCards(data) {
+            document.getElementById('totalIncome').textContent = data.total_income.toFixed(2);
+            document.getElementById('totalExpense').textContent = data.total_expense.toFixed(2);
+            document.getElementById('netProfit').textContent = data.net_profit.toFixed(2);
+            document.getElementById('profitMargin').textContent = data.profit_margin.toFixed(2) + '%';
+            // Color code profit
+            const profitElement = document.getElementById('netProfit');
+            if (data.net_profit >= 0) {
+                profitElement.style.color = 'var(--success)';
+            } else {
+                profitElement.style.color = 'var(--danger)';
+            }
+        }
+        // Update all charts
+        function updateCharts(data) {
+            updateShopProfitChart(data);
+            updateShopIncomeExpenseChart(data);
+            updateShopProfitDistributionChart(data);
+            updateShopPerformanceChart(data);
+        }
+        // Update shop profit comparison chart
+        function updateShopProfitChart(data) {
+            const ctx = document.getElementById('shopProfitChart').getContext('2d');
+            // Destroy existing chart if it exists
+            if (charts.shopProfit) {
+                charts.shopProfit.destroy();
+            }
+            // If viewing a specific shop, show daily breakdown
+            if (currentShop && data.daily_breakdown) {
+                const dailyData = data.daily_breakdown;
+                const labels = Object.keys(dailyData).map(date => {
+                    const d = new Date(date);
+                    return `${d.getDate()}/${d.getMonth()+1}`;
+                });
+                const incomeData = Object.values(dailyData).map(day => day.income || 0);
+                const expenseData = Object.values(dailyData).map(day => day.expense || 0);
+                const profitData = Object.values(dailyData).map(day => day.profit || 0);
+                charts.shopProfit = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Income',
+                                data: incomeData,
+                                backgroundColor: 'rgba(15, 157, 88, 0.7)',
+                                borderColor: 'rgba(15, 157, 88, 1)',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Expenses',
+                                data: expenseData,
+                                backgroundColor: 'rgba(234, 67, 53, 0.7)',
+                                borderColor: 'rgba(234, 67, 53, 1)',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Profit',
+                                data: profitData,
+                                backgroundColor: 'rgba(255, 107, 139, 0.7)',
+                                borderColor: 'rgba(255, 107, 139, 1)',
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: {
+                            duration: 1000,
+                            easing: 'easeOutQuart'
+                        },
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: `${currentShop} - Daily Performance`
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        label += '₹' + context.parsed.y.toFixed(2);
+                                        return label;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value) {
+                                        return '₹' + value;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            } else {
+                // Show comparison between shops
+                const shops = Object.keys(data.shops || {});
+                const incomeData = shops.map(shop => data.shops[shop].total_income || 0);
+                const expenseData = shops.map(shop => data.shops[shop].total_expense || 0);
+                const profitData = shops.map(shop => data.shops[shop].net_profit || 0);
+                charts.shopProfit = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: shops,
+                        datasets: [
+                            {
+                                label: 'Income',
+                                data: incomeData,
+                                backgroundColor: 'rgba(15, 157, 88, 0.7)',
+                                borderColor: 'rgba(15, 157, 88, 1)',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Expenses',
+                                data: expenseData,
+                                backgroundColor: 'rgba(234, 67, 53, 0.7)',
+                                borderColor: 'rgba(234, 67, 53, 1)',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Profit',
+                                data: profitData,
+                                backgroundColor: 'rgba(255, 107, 139, 0.7)',
+                                borderColor: 'rgba(255, 107, 139, 1)',
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: {
+                            duration: 1000,
+                            easing: 'easeOutQuart'
+                        },
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Shop Comparison'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        label += '₹' + context.parsed.y.toFixed(2);
+                                        return label;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value) {
+                                        return '₹' + value;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+        // Update shop income vs expense chart
+        function updateShopIncomeExpenseChart(data) {
+            const ctx = document.getElementById('shopIncomeExpenseChart').getContext('2d');
+            if (charts.shopIncomeExpense) {
+                charts.shopIncomeExpense.destroy();
+            }
+            // Create gradients for bars
+            const height = ctx.canvas.height || 400;
+            const incomeGradient = ctx.createLinearGradient(0, 0, 0, height);
+            incomeGradient.addColorStop(0, 'rgba(15, 157, 88, 0.8)');
+            incomeGradient.addColorStop(1, 'rgba(15, 157, 88, 0.4)');
+            const expenseGradient = ctx.createLinearGradient(0, 0, 0, height);
+            expenseGradient.addColorStop(0, 'rgba(234, 67, 53, 0.8)');
+            expenseGradient.addColorStop(1, 'rgba(234, 67, 53, 0.4)');
+            const profitGradient = ctx.createLinearGradient(0, 0, 0, height);
+            if (data.net_profit >= 0) {
+                profitGradient.addColorStop(0, 'rgba(255, 107, 139, 0.8)');
+                profitGradient.addColorStop(1, 'rgba(255, 107, 139, 0.4)');
+            } else {
+                profitGradient.addColorStop(0, 'rgba(234, 67, 53, 0.8)');
+                profitGradient.addColorStop(1, 'rgba(234, 67, 53, 0.4)');
+            }
+            const labels = ['Income', 'Expenses', data.net_profit >= 0 ? 'Profit' : 'Loss'];
+            charts.shopIncomeExpense = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Amount (₹)',
+                        data: [
+                            data.total_income,
+                            data.total_expense,
+                            data.net_profit
+                        ],
+                        backgroundColor: [
+                            incomeGradient,
+                            expenseGradient,
+                            profitGradient
+                        ],
+                        borderColor: [
+                            'rgba(15, 157, 88, 1)',
+                            'rgba(234, 67, 53, 1)',
+                            data.net_profit >= 0 ? 'rgba(255, 107, 139, 1)' : 'rgba(234, 67, 53, 1)'
+                        ],
+                        borderWidth: 2,
+                        borderRadius: 12,
+                        borderSkipped: false,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: {
+                        duration: 1200,
+                        easing: 'easeOutQuart'
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: currentShop ? `${currentShop} - Financial Summary` : 'All Shops - Financial Summary'
+                        },
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleFont: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            bodyFont: {
+                                size: 13
+                            },
+                            padding: 12,
+                            cornerRadius: 8,
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed.y;
+                                    let displayValue = value.toFixed(2);
+                                    if (label === 'Loss' || (label === 'Profit' && value < 0)) {
+                                        displayValue = Math.abs(value).toFixed(2);
+                                    }
+                                    return `${label}: ₹${displayValue}`;
+                                }
+                            }
+                        },
+                        datalabels: {
+                            display: true,
+                            color: 'white',
+                            font: {
+                                weight: 'bold',
+                                size: 12
+                            },
+                            formatter: function(value, context) {
+                                const label = context.chart.data.labels[context.dataIndex];
+                                let displayValue = value.toLocaleString();
+                                if (label === 'Loss' || (label === 'Profit' && value < 0)) {
+                                    displayValue = Math.abs(value).toLocaleString();
+                                }
+                                return '₹' + displayValue;
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return '₹' + value;
+                                },
+                                font: {
+                                    size: 11
+                                },
+                                color: 'rgba(0, 0, 0, 0.6)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false,
+                                drawBorder: false
+                            },
+                            ticks: {
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                },
+                                color: 'rgba(0, 0, 0, 0.7)'
+                            }
+                        }
+                    }
+                },
+                plugins: [ChartDataLabels]
+            });
+        }
+        // Update shop profit distribution chart - IMPROVED FOR BETTER FONT AND HANDLING
+        function updateShopProfitDistributionChart(data) {
+            const ctx = document.getElementById('shopProfitDistributionChart').getContext('2d');
+            if (charts.shopProfitDistribution) {
+                charts.shopProfitDistribution.destroy();
+            }
+            // Always show profit distribution by shop
+            const shops = Object.keys(data.shops || {});
+            const profitData = shops.map(shop => data.shops[shop].net_profit || 0);
+            const totalAbs = profitData.reduce((sum, p) => sum + Math.abs(p), 0);
+            const absProfits = profitData.map(p => Math.abs(p));
+            const labels = shops; // Just shop names for clean labels
+            // Color scheme
+            const colorScheme = [
+                'rgba(255, 99, 132, 0.8)',
+                'rgba(54, 162, 235, 0.8)',
+                'rgba(255, 206, 86, 0.8)',
+                'rgba(75, 192, 192, 0.8)',
+                'rgba(153, 102, 255, 0.8)',
+                'rgba(255, 159, 64, 0.8)',
+                'rgba(199, 199, 199, 0.8)',
+                'rgba(83, 102, 255, 0.8)',
+                'rgba(40, 159, 64, 0.8)',
+                'rgba(210, 99, 132, 0.8)'
+            ];
+            const borderScheme = colorScheme.map(c => c.replace('0.8', '1'));
+            let posIndex = 0;
+            const backgroundColors = profitData.map(profit => {
+                if (profit < 0) {
+                    return 'rgba(234, 67, 53, 0.8)';
+                } else {
+                    return colorScheme[posIndex++ % colorScheme.length];
+                }
+            });
+            const borderColors = backgroundColors.map(c => c.replace('0.8', '1'));
+            charts.shopProfitDistribution = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: absProfits,
+                        backgroundColor: backgroundColors,
+                        borderColor: borderColors,
+                        borderWidth: 2,
+                        hoverOffset: 15
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: {
+                        duration: 1500,
+                        easing: 'easeOutQuart',
+                        animateRotate: true,
+                        animateScale: true
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Shop Profit Distribution',
+                            font: {
+                                size: 18,
+                                weight: 'bold'
+                            }
+                        },
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 15,
+                                font: {
+                                    size: 10,
+                                    weight: '500'
+                                },
+                                generateLabels: function(chart) {
+                                    const data = chart.data;
+                                    if (data.labels.length && data.datasets.length) {
+                                        return data.labels.map((label, i) => {
+                                            const absValue = data.datasets[0].data[i];
+                                            const origProfit = profitData[i];
+                                            const perc = totalAbs > 0 ? (absValue / totalAbs * 100).toFixed(1) : '0.0';
+                                            const sign = origProfit >= 0 ? 'Profit' : 'Loss';
+                                            const absVal = Math.abs(origProfit).toLocaleString();
+                                            return {
+                                                text: `${label}: ${sign} ₹${absVal} (${perc}%)`,
+                                                fillStyle: data.datasets[0].backgroundColor[i],
+                                                strokeStyle: data.datasets[0].borderColor[i],
+                                                lineWidth: 1,
+                                                hidden: false,
+                                                index: i
+                                            };
+                                        });
+                                    }
+                                    return [];
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleFont: {
+                                size: 13,
+                                weight: 'bold'
+                            },
+                            bodyFont: {
+                                size: 12
+                            },
+                            padding: 10,
+                            cornerRadius: 6,
+                            callbacks: {
+                                label: function(context) {
+                                    const origProfit = profitData[context.dataIndex];
+                                    const value = context.parsed;
+                                    const perc = totalAbs > 0 ? (value / totalAbs * 100).toFixed(1) : '0.0';
+                                    const sign = origProfit >= 0 ? 'Profit' : 'Loss';
+                                    const absVal = Math.abs(origProfit).toFixed(2);
+                                    return `${sign}: ₹${absVal} (${perc}%)`;
+                                }
+                            }
+                        },
+                        datalabels: {
+                            display: function(context) {
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = total > 0 ? (context.parsed / total * 100) : 0;
+                                return percentage > 3; // Show only if >3%
+                            },
+                            color: 'white',
+                            font: {
+                                weight: 'bold',
+                                size: 11
+                            },
+                            formatter: function(value, context) {
+                                const total = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                                const percentage = total > 0 ? Math.round((value / total) * 100) : 0;
+                                return `${percentage}%`;
+                            }
+                        }
+                    },
+                    cutout: '60%'
+                },
+                plugins: [ChartDataLabels]
+            });
+        }
+        // Update shop performance trend chart
+        function updateShopPerformanceChart(data) {
+            const ctx = document.getElementById('shopPerformanceChart').getContext('2d');
+            if (charts.shopPerformance) {
+                charts.shopPerformance.destroy();
+            }
+            // If viewing a specific shop and we have daily breakdown
+            if (currentShop && data.daily_breakdown) {
+                const dailyData = data.daily_breakdown;
+                const labels = Object.keys(dailyData).map(date => {
+                    const d = new Date(date);
+                    return `${d.getDate()}/${d.getMonth()+1}`;
+                });
+                const profitData = Object.values(dailyData).map(day => day.profit || 0);
+                charts.shopPerformance = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Daily Profit',
+                            data: profitData,
+                            borderColor: 'rgba(255, 107, 139, 1)',
+                            backgroundColor: 'rgba(255, 107, 139, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: {
+                            duration: 1000,
+                            easing: 'easeOutQuart'
+                        },
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: `${currentShop} - Daily Profit Trend`
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return `Profit: ₹${context.parsed.y.toFixed(2)}`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value) {
+                                        return '₹' + value;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            } else {
+                // Show performance comparison between shops
+                const shops = Object.keys(data.shops || {});
+                const profitData = shops.map(shop => data.shops[shop].net_profit || 0);
+                const profitMarginData = shops.map(shop => {
+                    const shopData = data.shops[shop];
+                    return shopData.total_income > 0 ?
+                        (shopData.net_profit / shopData.total_income) * 100 : 0;
+                });
+                charts.shopPerformance = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: shops,
+                        datasets: [
+                            {
+                                label: 'Net Profit (₹)',
+                                data: profitData,
+                                backgroundColor: 'rgba(255, 107, 139, 0.7)',
+                                borderColor: 'rgba(255, 107, 139, 1)',
+                                borderWidth: 1,
+                                yAxisID: 'y'
+                            },
+                            {
+                                label: 'Profit Margin (%)',
+                                data: profitMarginData,
+                                backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                borderWidth: 1,
+                                yAxisID: 'y1',
+                                type: 'line'
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: {
+                            duration: 1000,
+                            easing: 'easeOutQuart'
+                        },
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Shop Performance Comparison'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        if (context.datasetIndex === 0) {
+                                            return `Net Profit: ₹${context.parsed.y.toFixed(2)}`;
+                                        } else {
+                                            return `Profit Margin: ${context.parsed.y.toFixed(2)}%`;
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                type: 'linear',
+                                display: true,
+                                position: 'left',
+                                title: {
+                                    display: true,
+                                    text: 'Net Profit (₹)'
+                                },
+                                ticks: {
+                                    callback: function(value) {
+                                        return '₹' + value;
+                                    }
+                                }
+                            },
+                            y1: {
+                                type: 'linear',
+                                display: true,
+                                position: 'right',
+                                title: {
+                                    display: true,
+                                    text: 'Profit Margin (%)'
+                                },
+                                ticks: {
+                                    callback: function(value) {
+                                        return value + '%';
+                                    }
+                                },
+                                grid: {
+                                    drawOnChartArea: false
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+        // Create fullscreen chart
+        function createFullscreenChart(chartId, data) {
+            const canvas = document.getElementById('fullscreenChartCanvas');
+            const ctx = canvas.getContext('2d');
+            // Destroy existing chart if exists
+            if (charts.fullscreen) {
+                charts.fullscreen.destroy();
+            }
+            let fullscreenChart = null;
+            switch(chartId) {
+                case 'shopProfitChart':
+                    fullscreenChart = createShopProfitFullscreen(ctx, data);
+                    break;
+                case 'shopIncomeExpenseChart':
+                    fullscreenChart = createShopIncomeExpenseFullscreen(ctx, data);
+                    break;
+                case 'shopProfitDistributionChart':
+                    fullscreenChart = createShopProfitDistributionFullscreen(ctx, data);
+                    break;
+                case 'shopPerformanceChart':
+                    fullscreenChart = createShopPerformanceFullscreen(ctx, data);
+                    break;
+            }
+            charts.fullscreen = fullscreenChart;
+            return fullscreenChart;
+        }
+        // Fullscreen chart creation functions
+        function createShopProfitFullscreen(ctx, data) {
+            if (currentShop && data.daily_breakdown) {
+                const dailyData = data.daily_breakdown;
+                const labels = Object.keys(dailyData).map(date => {
+                    const d = new Date(date);
+                    return `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`;
+                });
+                const incomeData = Object.values(dailyData).map(day => day.income || 0);
+                const expenseData = Object.values(dailyData).map(day => day.expense || 0);
+                const profitData = Object.values(dailyData).map(day => day.profit || 0);
+                return new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Income',
+                                data: incomeData,
+                                backgroundColor: 'rgba(15, 157, 88, 0.7)',
+                                borderColor: 'rgba(15, 157, 88, 1)',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Expenses',
+                                data: expenseData,
+                                backgroundColor: 'rgba(234, 67, 53, 0.7)',
+                                borderColor: 'rgba(234, 67, 53, 1)',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Profit',
+                                data: profitData,
+                                backgroundColor: 'rgba(255, 107, 139, 0.7)',
+                                borderColor: 'rgba(255, 107, 139, 1)',
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: {
+                            duration: 1500,
+                            easing: 'easeOutQuart'
+                        },
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: `${currentShop} - Daily Performance (Full Screen)`,
+                                font: {
+                                    size: 24
+                                }
+                            },
+                            legend: {
+                                labels: {
+                                    font: {
+                                        size: 16
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                bodyFont: {
+                                    size: 16
+                                },
+                                titleFont: {
+                                    size: 18
+                                },
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        label += '₹' + context.parsed.y.toFixed(2);
+                                        return label;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    font: {
+                                        size: 14
+                                    },
+                                    callback: function(value) {
+                                        return '₹' + value;
+                                    }
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    font: {
+                                        size: 12
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            } else {
+                const shops = Object.keys(data.shops || {});
+                const incomeData = shops.map(shop => data.shops[shop].total_income || 0);
+                const expenseData = shops.map(shop => data.shops[shop].total_expense || 0);
+                const profitData = shops.map(shop => data.shops[shop].net_profit || 0);
+                return new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: shops,
+                        datasets: [
+                            {
+                                label: 'Income',
+                                data: incomeData,
+                                backgroundColor: 'rgba(15, 157, 88, 0.7)',
+                                borderColor: 'rgba(15, 157, 88, 1)',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Expenses',
+                                data: expenseData,
+                                backgroundColor: 'rgba(234, 67, 53, 0.7)',
+                                borderColor: 'rgba(234, 67, 53, 1)',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Profit',
+                                data: profitData,
+                                backgroundColor: 'rgba(255, 107, 139, 0.7)',
+                                borderColor: 'rgba(255, 107, 139, 1)',
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: {
+                            duration: 1500,
+                            easing: 'easeOutQuart'
+                        },
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Shop Comparison (Full Screen)',
+                                font: {
+                                    size: 24
+                                }
+                            },
+                            legend: {
+                                labels: {
+                                    font: {
+                                        size: 16
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                bodyFont: {
+                                    size: 16
+                                },
+                                titleFont: {
+                                    size: 18
+                                },
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        label += '₹' + context.parsed.y.toFixed(2);
+                                        return label;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    font: {
+                                        size: 14
+                                    },
+                                    callback: function(value) {
+                                        return '₹' + value;
+                                    }
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    font: {
+                                        size: 14
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+        function createShopIncomeExpenseFullscreen(ctx, data) {
+            // Create gradients for bars
+            const height = ctx.canvas.height || 600;
+            const incomeGradient = ctx.createLinearGradient(0, 0, 0, height);
+            incomeGradient.addColorStop(0, 'rgba(15, 157, 88, 0.8)');
+            incomeGradient.addColorStop(1, 'rgba(15, 157, 88, 0.4)');
+            const expenseGradient = ctx.createLinearGradient(0, 0, 0, height);
+            expenseGradient.addColorStop(0, 'rgba(234, 67, 53, 0.8)');
+            expenseGradient.addColorStop(1, 'rgba(234, 67, 53, 0.4)');
+            const profitGradient = ctx.createLinearGradient(0, 0, 0, height);
+            if (data.net_profit >= 0) {
+                profitGradient.addColorStop(0, 'rgba(255, 107, 139, 0.8)');
+                profitGradient.addColorStop(1, 'rgba(255, 107, 139, 0.4)');
+            } else {
+                profitGradient.addColorStop(0, 'rgba(234, 67, 53, 0.8)');
+                profitGradient.addColorStop(1, 'rgba(234, 67, 53, 0.4)');
+            }
+            const labels = ['Income', 'Expenses', data.net_profit >= 0 ? 'Profit' : 'Loss'];
+            return new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Amount (₹)',
+                        data: [
+                            data.total_income,
+                            data.total_expense,
+                            data.net_profit
+                        ],
+                        backgroundColor: [
+                            incomeGradient,
+                            expenseGradient,
+                            profitGradient
+                        ],
+                        borderColor: [
+                            'rgba(15, 157, 88, 1)',
+                            'rgba(234, 67, 53, 1)',
+                            data.net_profit >= 0 ? 'rgba(255, 107, 139, 1)' : 'rgba(234, 67, 53, 1)'
+                        ],
+                        borderWidth: 2,
+                        borderRadius: 12,
+                        borderSkipped: false,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: {
+                        duration: 1500,
+                        easing: 'easeOutQuart'
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: (currentShop ? `${currentShop} - Financial Summary` : 'All Shops - Financial Summary') + ' (Full Screen)',
+                            font: {
+                                size: 24
+                            }
+                        },
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleFont: {
+                                size: 18,
+                                weight: 'bold'
+                            },
+                            bodyFont: {
+                                size: 16
+                            },
+                            padding: 16,
+                            cornerRadius: 8,
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed.y;
+                                    let displayValue = value.toFixed(2);
+                                    if (label === 'Loss' || (label === 'Profit' && value < 0)) {
+                                        displayValue = Math.abs(value).toFixed(2);
+                                    }
+                                    return `${label}: ₹${displayValue}`;
+                                }
+                            }
+                        },
+                        datalabels: {
+                            display: true,
+                            color: 'white',
+                            font: {
+                                weight: 'bold',
+                                size: 16
+                            },
+                            formatter: function(value, context) {
+                                const label = context.chart.data.labels[context.dataIndex];
+                                let displayValue = value.toLocaleString();
+                                if (label === 'Loss' || (label === 'Profit' && value < 0)) {
+                                    displayValue = Math.abs(value).toLocaleString();
+                                }
+                                return '₹' + displayValue;
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                font: {
+                                    size: 14
+                                },
+                                callback: function(value) {
+                                    return '₹' + value;
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false,
+                                drawBorder: false
+                            },
+                            ticks: {
+                                font: {
+                                    size: 16,
+                                    weight: 'bold'
+                                }
+                            }
+                        }
+                    }
+                },
+                plugins: [ChartDataLabels]
+            });
+        }
+        // Fullscreen profit distribution - IMPROVED
+        function createShopProfitDistributionFullscreen(ctx, data) {
+            // Always show profit distribution by shop
+            const shops = Object.keys(data.shops || {});
+            const profitData = shops.map(shop => data.shops[shop].net_profit || 0);
+            const totalAbs = profitData.reduce((sum, p) => sum + Math.abs(p), 0);
+            const absProfits = profitData.map(p => Math.abs(p));
+            const labels = shops; // Just shop names for clean labels
+            // Color scheme
+            const colorScheme = [
+                'rgba(255, 99, 132, 0.8)',
+                'rgba(54, 162, 235, 0.8)',
+                'rgba(255, 206, 86, 0.8)',
+                'rgba(75, 192, 192, 0.8)',
+                'rgba(153, 102, 255, 0.8)',
+                'rgba(255, 159, 64, 0.8)',
+                'rgba(199, 199, 199, 0.8)',
+                'rgba(83, 102, 255, 0.8)',
+                'rgba(40, 159, 64, 0.8)',
+                'rgba(210, 99, 132, 0.8)'
+            ];
+            const borderScheme = colorScheme.map(c => c.replace('0.8', '1'));
+            let posIndex = 0;
+            const backgroundColors = profitData.map(profit => {
+                if (profit < 0) {
+                    return 'rgba(234, 67, 53, 0.8)';
+                } else {
+                    return colorScheme[posIndex++ % colorScheme.length];
+                }
+            });
+            const borderColors = backgroundColors.map(c => c.replace('0.8', '1'));
+            return new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: absProfits,
+                        backgroundColor: backgroundColors,
+                        borderColor: borderColors,
+                        borderWidth: 2,
+                        hoverOffset: 20
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: {
+                        duration: 2000,
+                        easing: 'easeOutQuart',
+                        animateRotate: true,
+                        animateScale: true
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Shop Profit Distribution (Full Screen)',
+                            font: {
+                                size: 24
+                            }
+                        },
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                font: {
+                                    size: 12
+                                },
+                                padding: 20,
+                                usePointStyle: true,
+                                generateLabels: function(chart) {
+                                    const data = chart.data;
+                                    if (data.labels.length && data.datasets.length) {
+                                        return data.labels.map((label, i) => {
+                                            const absValue = data.datasets[0].data[i];
+                                            const origProfit = profitData[i];
+                                            const perc = totalAbs > 0 ? (absValue / totalAbs * 100).toFixed(1) : '0.0';
+                                            const sign = origProfit >= 0 ? 'Profit' : 'Loss';
+                                            const absVal = Math.abs(origProfit).toLocaleString();
+                                            return {
+                                                text: `${label}: ${sign} ₹${absVal} (${perc}%)`,
+                                                fillStyle: data.datasets[0].backgroundColor[i],
+                                                strokeStyle: data.datasets[0].borderColor[i],
+                                                lineWidth: 1,
+                                                hidden: false,
+                                                index: i
+                                            };
+                                        });
+                                    }
+                                    return [];
+                                }
+                            }
+                        },
+                        tooltip: {
+                            bodyFont: {
+                                size: 16
+                            },
+                            titleFont: {
+                                size: 18
+                            },
+                            callbacks: {
+                                label: function(context) {
+                                    const origProfit = profitData[context.dataIndex];
+                                    const value = context.parsed;
+                                    const perc = totalAbs > 0 ? (value / totalAbs * 100).toFixed(1) : '0.0';
+                                    const sign = origProfit >= 0 ? 'Profit' : 'Loss';
+                                    const absVal = Math.abs(origProfit).toFixed(2);
+                                    return `${sign}: ₹${absVal} (${perc}%)`;
+                                }
+                            }
+                        },
+                        datalabels: {
+                            display: function(context) {
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = total > 0 ? (context.parsed / total * 100) : 0;
+                                return percentage > 3;
+                            },
+                            color: 'white',
+                            font: {
+                                weight: 'bold',
+                                size: 14
+                            },
+                            formatter: function(value, context) {
+                                const total = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                                const percentage = total > 0 ? Math.round((value / total) * 100) : 0;
+                                return `${percentage}%`;
+                            }
+                        }
+                    },
+                    cutout: '60%'
+                },
+                plugins: [ChartDataLabels]
+            });
+        }
+        function createShopPerformanceFullscreen(ctx, data) {
+            if (currentShop && data.daily_breakdown) {
+                const dailyData = data.daily_breakdown;
+                const labels = Object.keys(dailyData).map(date => {
+                    const d = new Date(date);
+                    return `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`;
+                });
+                const profitData = Object.values(dailyData).map(day => day.profit || 0);
+                return new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Daily Profit',
+                            data: profitData,
+                            borderColor: 'rgba(255, 107, 139, 1)',
+                            backgroundColor: 'rgba(255, 107, 139, 0.1)',
+                            borderWidth: 4,
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: {
+                            duration: 1500,
+                            easing: 'easeOutQuart'
+                        },
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: `${currentShop} - Daily Profit Trend (Full Screen)`,
+                                font: {
+                                    size: 24
+                                }
+                            },
+                            legend: {
+                                labels: {
+                                    font: {
+                                        size: 16
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                bodyFont: {
+                                    size: 16
+                                },
+                                titleFont: {
+                                    size: 18
+                                },
+                                callbacks: {
+                                    label: function(context) {
+                                        return `Profit: ₹${context.parsed.y.toFixed(2)}`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    font: {
+                                        size: 14
+                                    },
+                                    callback: function(value) {
+                                        return '₹' + value;
+                                    }
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    font: {
+                                        size: 12
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            } else {
+                const shops = Object.keys(data.shops || {});
+                const profitData = shops.map(shop => data.shops[shop].net_profit || 0);
+                const profitMarginData = shops.map(shop => {
+                    const shopData = data.shops[shop];
+                    return shopData.total_income > 0 ?
+                        (shopData.net_profit / shopData.total_income) * 100 : 0;
+                });
+                return new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: shops,
+                        datasets: [
+                            {
+                                label: 'Net Profit (₹)',
+                                data: profitData,
+                                backgroundColor: 'rgba(255, 107, 139, 0.7)',
+                                borderColor: 'rgba(255, 107, 139, 1)',
+                                borderWidth: 1,
+                                yAxisID: 'y'
+                            },
+                            {
+                                label: 'Profit Margin (%)',
+                                data: profitMarginData,
+                                backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                borderWidth: 1,
+                                yAxisID: 'y1',
+                                type: 'line'
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: {
+                            duration: 1500,
+                            easing: 'easeOutQuart'
+                        },
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Shop Performance Comparison (Full Screen)',
+                                font: {
+                                    size: 24
+                                }
+                            },
+                            legend: {
+                                labels: {
+                                    font: {
+                                        size: 16
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                bodyFont: {
+                                    size: 16
+                                },
+                                titleFont: {
+                                    size: 18
+                                },
+                                callbacks: {
+                                    label: function(context) {
+                                        if (context.datasetIndex === 0) {
+                                            return `Net Profit: ₹${context.parsed.y.toFixed(2)}`;
+                                        } else {
+                                            return `Profit Margin: ${context.parsed.y.toFixed(2)}%`;
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                type: 'linear',
+                                display: true,
+                                position: 'left',
+                                title: {
+                                    display: true,
+                                    text: 'Net Profit (₹)',
+                                    font: {
+                                        size: 16
+                                    }
+                                },
+                                ticks: {
+                                    font: {
+                                        size: 14
+                                    },
+                                    callback: function(value) {
+                                        return '₹' + value;
+                                    }
+                                }
+                            },
+                            y1: {
+                                type: 'linear',
+                                display: true,
+                                position: 'right',
+                                title: {
+                                    display: true,
+                                    text: 'Profit Margin (%)',
+                                    font: {
+                                        size: 16
+                                    }
+                                },
+                                ticks: {
+                                    font: {
+                                        size: 14
+                                    },
+                                    callback: function(value) {
+                                        return value + '%';
+                                    }
+                                },
+                                grid: {
+                                    drawOnChartArea: false
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    font: {
+                                        size: 14
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+        // Open full screen chart
+        function openFullscreenChart(chartId) {
+            const fullscreenModal = document.getElementById('fullscreenModal');
+            const fullscreenTitle = document.getElementById('fullscreenTitle');
+            const fullscreenChartTitle = document.getElementById('fullscreenChartTitle');
+            // Set titles based on chart type
+            let chartTitle = '';
+            switch(chartId) {
+                case 'shopProfitChart':
+                    chartTitle = 'Shop Profit Analysis';
+                    break;
+                case 'shopIncomeExpenseChart':
+                    chartTitle = 'Shop Income vs Expense Analysis';
+                    break;
+                case 'shopProfitDistributionChart':
+                    chartTitle = 'Shop Profit Distribution';
+                    break;
+                case 'shopPerformanceChart':
+                    chartTitle = 'Shop Performance Trend';
+                    break;
+            }
+            fullscreenTitle.textContent = chartTitle;
+            fullscreenChartTitle.textContent = chartTitle + ' (Full Screen)';
+            // Create the fullscreen chart
+            createFullscreenChart(chartId, currentData);
+            // Show the fullscreen modal
+            fullscreenModal.classList.add('active');
+            // Resize the chart after modal is visible
+            setTimeout(() => {
+                if (charts.fullscreen) {
+                    charts.fullscreen.resize();
+                }
+            }, 400);
+        }
+        // Close full screen chart
+        function closeFullscreenChart() {
+            const fullscreenModal = document.getElementById('fullscreenModal');
+            fullscreenModal.classList.remove('active');
+            // Destroy fullscreen chart to free memory
+            if (charts.fullscreen) {
+                charts.fullscreen.destroy();
+                charts.fullscreen = null;
+            }
+        }
+        // Load notifications for missing income (only past and current dates)
+        async function loadNotifications() {
+            try {
+                const currentMonth = new Date().toISOString().slice(0, 7);
+                const response = await fetch(`${API_BASE}/reminders/missing-income?month=${currentMonth}`);
+                const data = await response.json();
+                // Filter missing dates to only include dates <= current date (no future "upcoming" entries)
+                const today = new Date().toISOString().split('T')[0];
+                const missingDates = data.missing_dates ? data.missing_dates.filter(date => date <= today) : [];
+                const notificationContent = document.getElementById('notificationContent');
+                const notificationBadge = document.getElementById('notificationBadge');
+                if (missingDates.length > 0) {
+                    notificationBadge.textContent = missingDates.length;
+                    notificationBadge.style.display = 'flex';
+                    let notificationsHtml = '';
+                    missingDates.forEach(date => {
+                        notificationsHtml += `
+                            <div class="notification-item">
+                                <div class="notification-date">${date}</div>
+                                <div class="notification-message">No income entry for this date</div>
+                            </div>
+                        `;
+                    });
+                    notificationContent.innerHTML = notificationsHtml;
+                } else {
+                    notificationContent.innerHTML = `
+                        <div class="no-notifications">
+                            <i class="fas fa-check-circle" style="font-size: 24px; margin-bottom: 10px; color: var(--success);"></i>
+                            <p>All income entries are up to date!</p>
+                        </div>
+                    `;
+                    notificationBadge.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error loading notifications:', error);
+            }
+        }
+        // Toggle notifications dropdown
+        function toggleNotifications() {
+            const dropdown = document.getElementById('notificationDropdown');
+            if (dropdown.style.display === 'block') {
+                dropdown.style.display = 'none';
+            } else {
+                dropdown.style.display = 'block';
+            }
+        }
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = '/';
+            }
+        }
+        // Close notification dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('notificationDropdown');
+            const bell = document.querySelector('.notification-bell');
+            if (dropdown.style.display === 'block' && !dropdown.contains(event.target) && !bell.contains(event.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bharkadevi Icecream - Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #FF6B8B;
+            --primary-dark: #E55A7B;
+            --primary-light: #FFE4EC;
+            --secondary: #6C5CE7;
+            --accent: #FFC312;
+            --success: #0F9D58;
+            --danger: #EA4335;
+            --warning: #F39C12;
+            --info: #17A2B8;
+            --light: #F8F9FA;
+            --dark: #2D3436;
+            --gray: #6C757D;
+            --light-gray: #E9ECEF;
+            --white: #FFFFFF;
+            --sidebar-width: 280px;
+            --header-height: 80px;
+            --border-radius: 20px;
+            --box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --gradient-primary: linear-gradient(135deg, #FF6B8B 0%, #FF8E53 100%);
+            --gradient-secondary: linear-gradient(135deg, #6C5CE7 0%, #8E44AD 100%);
+            --gradient-success: linear-gradient(135deg, #0F9D58 0%, #00C853 100%);
+            --gradient-danger: linear-gradient(135deg, #EA4335 0%, #FF5252 100%);
+            --gradient-warning: linear-gradient(135deg, #F39C12 0%, #FFC107 100%);
+            --gradient-info: linear-gradient(135deg, #17A2B8 0%, #00BCD4 100%);
+            --gradient-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-sidebar: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            --gradient-card: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+            --gradient-chart: linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(248,249,250,0.7) 100%);
+            --glass-effect: rgba(255, 255, 255, 0.25);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.18);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: var(--gradient-bg);
+            color: var(--dark);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        .container {
+            display: flex;
+            min-height: 100vh;
+            position: relative;
+        }
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--gradient-sidebar);
+            color: var(--white);
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--glass-shadow);
+            z-index: 1000;
+            transition: var(--transition);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        .logo {
+            text-align: center;
+            padding: 25px 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        .logo h1 {
+            font-size: 23px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .logo span {
+            color: var(--accent);
+            font-weight: 800;
+        }
+        .logo p {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+        .menu-item {
+            padding: 16px 25px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition);
+            border-left: 4px solid transparent;
+            margin: 4px 12px;
+            border-radius: 12px;
+        }
+        .menu-item:hover, .menu-item.active {
+            background: rgba(255, 255, 255, 0.15);
+            border-left: 4px solid var(--accent);
+            transform: translateX(5px);
+        }
+        .menu-item i {
+            margin-right: 15px;
+            font-size: 20px;
+            width: 24px;
+            text-align: center;
+            color: var(--accent);
+        }
+        .menu-item span {
+            font-weight: 500;
+            font-size: 15px;
+        }
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            margin-left: var(--sidebar-width);
+            width: calc(100% - var(--sidebar-width));
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            background: var(--glass-effect);
+            backdrop-filter: blur(20px);
+            height: var(--header-height);
+            z-index: 100;
+            margin: 15px;
+            margin-top: 10px;
+            border-radius: var(--border-radius);
+            border: var(--glass-border);
+            transition: var(--transition);
+            box-shadow: var(--box-shadow);
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        .user-info .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 22px;
+            font-weight: 600;
+            margin-right: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        /* Content Area */
+        .content {
+            padding: 30px;
+            overflow-y: auto;
+            flex: 1;
+        }
+        .card {
+            background: var(--gradient-card);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 28px;
+            margin-bottom: 30px;
+            border: var(--glass-border);
+            backdrop-filter: blur(10px);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        .card-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .card-title i {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 700;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+        .btn:hover::before {
+            left: 100%;
+        }
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: var(--white);
+        }
+        .btn-secondary {
+            background: var(--gradient-secondary);
+            color: var(--white);
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        /* Summary Cards */
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .summary-card {
+            background: var(--gradient-card);
+            border-radius: var(--border-radius);
+            padding: 25px 20px;
+            text-align: center;
+            box-shadow: var(--box-shadow);
+            border: var(--glass-border);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        .summary-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+        .summary-card:nth-child(1)::before { background: var(--gradient-success); }
+        .summary-card:nth-child(2)::before { background: var(--gradient-danger); }
+        .summary-card:nth-child(3)::before { background: var(--gradient-primary); }
+        .summary-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        .summary-icon {
+            font-size: 28px;
+            margin-bottom: 15px;
+            display: inline-block;
+            padding: 12px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.05);
+        }
+        .summary-value {
+            font-size: 24px;
+            font-weight: 800;
+            margin: 8px 0;
+        }
+        .income-value { color: var(--success); }
+        .expense-value { color: var(--danger); }
+        .profit-value { color: var(--primary); }
+        .summary-label {
+            font-size: 14px;
+            color: var(--gray);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .rupee-symbol::before {
+            content: "₹";
+            font-family: inherit;
+        }
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 15px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(5px);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+        }
+        th, td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--light-gray);
+            transition: var(--transition);
+        }
+        th {
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--glass-effect) 100%);
+            font-weight: 800;
+            color: var(--primary);
+            position: sticky;
+            top: 0;
+            letter-spacing: 0.5px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        tr {
+            transition: var(--transition);
+        }
+        tr:hover {
+            background: linear-gradient(135deg, #f8f9fa 0%, var(--glass-effect) 100%);
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        tr:nth-child(even):hover {
+            background: linear-gradient(135deg, rgba(248, 249, 250, 0.8) 0%, rgba(255, 255, 255, 0.25) 100%);
+        }
+        .income-value { color: var(--success); font-weight: bold; }
+        .expense-value { color: var(--danger); font-weight: bold; }
+        /* Date Selector */
+        .date-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .date-selector label {
+            font-weight: 700;
+            color: var(--dark);
+            letter-spacing: 0.5px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .date-selector input {
+            padding: 8px 12px;
+            border: 2px solid var(--light-gray);
+            border-radius: 8px;
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(5px);
+            transition: var(--transition);
+        }
+        .date-selector input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(255, 107, 139, 0.1), var(--glass-shadow);
+            background: var(--white);
+            transform: scale(1.02);
+        }
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .modal-content {
+            background: var(--gradient-card);
+            backdrop-filter: blur(30px);
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: var(--border-radius);
+            width: 70%;
+            box-shadow: var(--box-shadow);
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            border: var(--glass-border);
+        }
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+        }
+        .close {
+            color: var(--gray);
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .close:hover {
+            color: var(--dark);
+            transform: rotate(90deg) scale(1.2);
+        }
+        /* Notification Styles */
+        .notification-bell {
+            position: relative;
+            margin-right: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .notification-bell i {
+            font-size: 24px;
+            color: var(--primary);
+            filter: drop-shadow(0 2px 5px rgba(255, 107, 139, 0.3));
+            transition: var(--transition);
+        }
+        .notification-bell:hover i {
+            color: var(--primary-dark);
+            transform: scale(1.1) rotate(10deg);
+            filter: drop-shadow(0 2px 8px rgba(255, 107, 139, 0.5));
+        }
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--gradient-danger);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(234, 67, 53, 0.4);
+            animation: badgePulse 1.5s ease-in-out infinite;
+        }
+        @keyframes badgePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        .notification-dropdown {
+            position: absolute;
+            top: 60px;
+            right: 0;
+            background: var(--gradient-card);
+            backdrop-filter: blur(20px);
+            border-radius: var(--border-radius);
+            box-shadow: var(--glass-shadow);
+            width: 350px;
+            z-index: 1000;
+            display: none;
+            border: var(--glass-border);
+            overflow: hidden;
+        }
+        .notification-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--light-gray);
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 0.5px;
+            background: var(--glass-effect);
+            position: relative;
+            overflow: hidden;
+        }
+        .notification-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: var(--transition);
+        }
+        .notification-header:hover::before {
+            left: 100%;
+        }
+        .notification-content {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .notification-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--light-gray);
+            transition: var(--transition);
+            position: relative;
+        }
+        .notification-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--gradient-secondary);
+            opacity: 0;
+            transition: var(--transition);
+        }
+        .notification-item:hover {
+            background: var(--light);
+            transform: translateX(5px);
+        }
+        .notification-item:hover::before {
+            opacity: 1;
+        }
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+        .notification-date {
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 5px;
+            letter-spacing: 0.3px;
+        }
+        .notification-message {
+            color: var(--gray);
+            font-size: 14px;
+        }
+        .no-notifications {
+            padding: 20px;
+            text-align: center;
+            color: var(--gray);
+        }
+        .no-notifications i {
+            font-size: 48px;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+            animation: checkSpin 2s linear infinite;
+        }
+        @keyframes checkSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Custom Scrollbar Styles */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(var(--primary), var(--secondary));
+            border-radius: 10px;
+            transition: var(--transition);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(var(--primary-dark), var(--secondary));
+            transform: scale(1.1);
+        }
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideIn {
+            from { transform: translateY(-50px) scale(0.9); opacity: 0; }
+            to { transform: translateY(0) scale(1); opacity: 1; }
+        }
+        @keyframes glow {
+            0% { box-shadow: 0 0 5px rgba(255, 107, 139, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(255, 107, 139, 0.8); }
+            100% { box-shadow: 0 0 5px rgba(255, 107, 139, 0.5); }
+        }
+        /* Responsive Design */
+        @media (max-width: 1400px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 1200px) {
+            .summary-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 80px;
+            }
+            .sidebar .logo h1 span, .sidebar .menu-item span {
+                display: none;
+            }
+            .sidebar .logo h1 {
+                font-size: 18px;
+            }
+            .sidebar .menu-item {
+                justify-content: center;
+                padding: 15px;
+            }
+            .sidebar .menu-item i {
+                margin-right: 0;
+            }
+            .main-content {
+                margin-left: 80px;
+                width: calc(100% - 80px);
+            }
+            .modal-content {
+                width: 90%;
+            }
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+            .menu-items {
+                display: flex;
+                overflow-x: auto;
+            }
+            .menu-item {
+                flex-direction: column;
+                padding: 12px;
+                min-width: 80px;
+            }
+            .menu-item i {
+                margin-right: 0;
+                margin-bottom: 5px;
+            }
+            .summary-cards {
+                grid-template-columns: 1fr;
+            }
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+            }
+        }
+
+    </style>
+</head>
+<body onload="initializeApp()">
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <h1><i class="fas fa-ice-cream"></i> Bharkadevi<span>Icecream</span></h1>
+                <p>Daily Manager</p>
+            </div>
+            <div class="menu-items">
+                <div class="menu-item active" onclick="window.location.href='/dashboard'">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </div>
+                <div class="menu-item" onclick="window.location.href='/income'">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span>Income Entry</span>
+                </div>
+                <div class="menu-item" onclick="window.location.href='/expense'">
+                    <i class="fas fa-receipt"></i>
+                    <span>Expense Entry</span>
+                </div>
+                <div class="menu-item" onclick="window.location.href='/reports'">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Reports</span>
+                </div>
+                <div class="menu-item" onclick="window.location.href='/profit'">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Profit Analysis</span>
+                </div>
+                <div class="menu-item" onclick="window.location.href='/shop'">
+                    <i class="fas fa-building"></i>
+                    <span>Shop Profit</span>
+                </div>
+                <div class="menu-item" onclick="window.location.href='/history'">
+                    <i class="fas fa-history"></i>
+                    <span>Transaction History</span>
+                </div>
+                <div class="menu-item" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </div>
+            </div>
+        </div>
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <div class="date-selector">
+                    <label for="selectedDate">Select Date:</label>
+                    <input type="date" id="selectedDate" onchange="loadTransactionsForDate()">
+                </div>
+                <div style="display: flex; align-items: center;">
+                    <div class="notification-bell" onclick="toggleNotifications()">
+                        <i class="fas fa-bell"></i>
+                        <div class="notification-badge" id="notificationBadge" style="display: none;">0</div>
+                    </div>
+                    <div class="user-info">
+                        <div class="avatar">ST</div>
+                        <div>
+                            <h4>Smita Thakare</h4>
+                            <p>Owner</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Notification Dropdown -->
+            <div class="notification-dropdown" id="notificationDropdown">
+                <div class="notification-header">
+                    <i class="fas fa-bell"></i> Notifications
+                </div>
+                <div class="notification-content" id="notificationContent">
+                    <!-- Notifications will be populated here -->
+                </div>
+            </div>
+            <!-- Content Area -->
+            <div class="content">
+                <!-- Dashboard Section -->
+                <div id="dashboardSection" class="section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title"><i class="fas fa-chart-line"></i> Daily Profit/Loss Summary</h2>
+                            <button class="btn btn-primary" onclick="showMonthlyReport()">
+                                <i class="fas fa-calendar-alt"></i> Monthly Report
+                            </button>
+                        </div>
+                        <div class="summary-cards">
+                            <div class="summary-card">
+                                <div class="summary-icon" style="color: var(--success);">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                </div>
+                                <div class="summary-value income-value rupee-symbol" id="totalIncome">0.00</div>
+                                <div class="summary-label">Total Income</div>
+                            </div>
+                            <div class="summary-card">
+                                <div class="summary-icon" style="color: var(--danger);">
+                                    <i class="fas fa-receipt"></i>
+                                </div>
+                                <div class="summary-value expense-value rupee-symbol" id="totalExpense">0.00</div>
+                                <div class="summary-label">Total Expenses</div>
+                            </div>
+                            <div class="summary-card">
+                                <div class="summary-icon" style="color: var(--primary);">
+                                    <i class="fas fa-chart-pie"></i>
+                                </div>
+                                <div class="summary-value profit-value rupee-symbol" id="netProfit">0.00</div>
+                                <div class="summary-label">Net Profit/Loss</div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Recent Transactions -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title"><i class="fas fa-history"></i> Recent Transactions</h2>
+                        </div>
+                        <table id="recentTransactions">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Category</th>
+                                    <th>Location/Shop</th>
+                                    <th>Amount</th>
+                                    <th>Unit</th>
+                                    <th>Qty</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentTransactionsBody">
+                                <!-- Recent transactions will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Monthly Report Modal -->
+    <div id="monthlyReportModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeMonthlyReport()">&times;</span>
+            <h2 class="card-title"><i class="fas fa-calendar-alt"></i> Monthly Profit/Loss Report</h2>
+            <div class="form-group" style="margin: 20px 0;">
+                <label for="reportMonth">Select Month:</label>
+                <input type="month" id="reportMonth" class="form-control" onchange="generateMonthlyReport()">
+            </div>
+            <div id="monthlyReportContent">
+                <!-- Monthly report will be generated here -->
+            </div>
+        </div>
+    </div>
+    <script>
+        // Global variables
+        let transactions = [];
+        let currentDate = new Date().toISOString().split('T')[0];
+        let incomeCategories = [];
+        let expenseCategories = [];
+        // API base URL
+        const API_BASE = '/api';
+
+        // Initialize the application
+        async function initializeApp() {
+            // Set today's date as default
+            document.getElementById('selectedDate').value = currentDate;
+            // Load categories
+            await loadCategories();
+            await loadExpenseCategories();
+            // Then load transactions
+            await loadTransactionsForDate();
+            // Load notifications
+            await loadNotifications();
+        }
+
+        // Load income categories from server
+        async function loadCategories() {
+            try {
+                const incomeResponse = await fetch(`${API_BASE}/categories/income`);
+                incomeCategories = await incomeResponse.json();
+            } catch (error) {
+                console.error('Error loading income categories:', error);
+            }
+        }
+
+        // Load expense categories from server
+        async function loadExpenseCategories() {
+            try {
+                const expenseResponse = await fetch(`${API_BASE}/categories/expense`);
+                expenseCategories = await expenseResponse.json();
+            } catch (error) {
+                console.error('Error loading expense categories:', error);
+            }
+        }
+
+        // Load notifications for missing income (only past and current dates)
+        async function loadNotifications() {
+            try {
+                const currentMonth = new Date().toISOString().slice(0, 7);
+                const response = await fetch(`${API_BASE}/reminders/missing-income?month=${currentMonth}`);
+                const data = await response.json();
+                // Filter missing dates to only include dates <= current date (no future "upcoming" entries)
+                const today = new Date().toISOString().split('T')[0];
+                const missingDates = data.missing_dates ? data.missing_dates.filter(date => date <= today) : [];
+                const notificationContent = document.getElementById('notificationContent');
+                const notificationBadge = document.getElementById('notificationBadge');
+                if (missingDates.length > 0) {
+                    notificationBadge.textContent = missingDates.length;
+                    notificationBadge.style.display = 'flex';
+                    let notificationsHtml = '';
+                    missingDates.forEach(date => {
+                        notificationsHtml += `
+                            <div class="notification-item">
+                                <div class="notification-date">${date}</div>
+                                <div class="notification-message">No income entry for this date</div>
+                            </div>
+                        `;
+                    });
+                    notificationContent.innerHTML = notificationsHtml;
+                } else {
+                    notificationContent.innerHTML = `
+                        <div class="no-notifications">
+                            <i class="fas fa-check-circle" style="font-size: 24px; margin-bottom: 10px; color: var(--success);"></i>
+                            <p>All income entries are up to date!</p>
+                        </div>
+                    `;
+                    notificationBadge.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error loading notifications:', error);
+            }
+        }
+
+        // Toggle notifications dropdown
+        function toggleNotifications() {
+            const dropdown = document.getElementById('notificationDropdown');
+            if (dropdown.style.display === 'block') {
+                dropdown.style.display = 'none';
+            } else {
+                dropdown.style.display = 'block';
+            }
+        }
+
+        // Load transactions for selected date
+        async function loadTransactionsForDate() {
+            currentDate = document.getElementById('selectedDate').value;
+            try {
+                const response = await fetch(`${API_BASE}/transactions?date=${currentDate}`);
+                transactions = await response.json();
+                await updateDashboard();
+                updateRecentTransactions();
+            } catch (error) {
+                console.error('Error loading transactions:', error);
+            }
+        }
+
+        // Update dashboard with current date data
+        async function updateDashboard() {
+            try {
+                const response = await fetch(`${API_BASE}/dashboard/summary?date=${currentDate}`);
+                const data = await response.json();
+                document.getElementById('totalIncome').textContent = data.total_income.toFixed(2);
+                document.getElementById('totalExpense').textContent = data.total_expense.toFixed(2);
+                document.getElementById('netProfit').textContent = data.net_profit.toFixed(2);
+                // Color code the profit/loss
+                const profitElement = document.getElementById('netProfit');
+                if (data.net_profit >= 0) {
+                    profitElement.style.color = 'var(--success)';
+                } else {
+                    profitElement.style.color = 'var(--danger)';
+                }
+            } catch (error) {
+                console.error('Error updating dashboard:', error);
+            }
+        }
+
+        // Update recent transactions
+        function updateRecentTransactions() {
+            const recentTableBody = document.getElementById('recentTransactionsBody');
+            recentTableBody.innerHTML = '';
+
+            // Get transactions for current date, sorted by type (income first)
+            const dateTransactions = transactions
+                .filter(t => t.date === currentDate)
+                .sort((a, b) => {
+                    if (a.type === 'income' && b.type === 'expense') return -1;
+                    if (a.type === 'expense' && b.type === 'income') return 1;
+                    return 0;
+                });
+
+            if (dateTransactions.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td colspan="7" style="text-align: center; color: var(--gray);">No transactions for selected date</td>`;
+                recentTableBody.appendChild(row);
+                return;
+            }
+
+            dateTransactions.forEach(transaction => {
+                const row = document.createElement('tr');
+                const typeClass = transaction.type === 'income' ? 'income-value' : 'expense-value';
+
+                // For income: Category shows "-", Location/Shop shows the category (location)
+                // For expense: Category shows expense category, Location/Shop shows shop name
+                const category = transaction.type === 'income' ? '-' : (transaction.category || 'N/A');
+                const locationShop = transaction.type === 'income' ? (transaction.category || 'N/A') : (transaction.shop_name || 'N/A');
+
+                row.innerHTML = `
+                    <td>${transaction.date}</td>
+                    <td><span class="${typeClass}">${transaction.type.toUpperCase()}</span></td>
+                    <td>${category}</td>
+                    <td>${locationShop}</td>
+                    <td class="rupee-symbol ${typeClass}">${transaction.amount.toFixed(2)}</td>
+                    <td>${transaction.unit || 'N/A'}</td>
+                    <td>${transaction.qty ? transaction.qty.toFixed(2) : 'N/A'}</td>
+                `;
+                recentTableBody.appendChild(row);
+            });
+        }
+
+        // Show monthly report modal
+        function showMonthlyReport() {
+            document.getElementById('monthlyReportModal').style.display = 'block';
+            // Set default month to current month
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            document.getElementById('reportMonth').value = `${year}-${month}`;
+            generateMonthlyReport();
+        }
+
+        // Close monthly report modal
+        function closeMonthlyReport() {
+            document.getElementById('monthlyReportModal').style.display = 'none';
+        }
+
+        // Generate monthly report
+        async function generateMonthlyReport() {
+            const month = document.getElementById('reportMonth').value;
+            if (!month) return;
+            const [year, monthNum] = month.split('-');
+            const startDate = `${year}-${monthNum}-01`;
+            const endDate = `${year}-${monthNum}-${new Date(year, monthNum, 0).getDate()}`;
+            try {
+                const response = await fetch(`${API_BASE}/transactions/date-range?start_date=${startDate}&end_date=${endDate}`);
+                const monthlyTransactions = await response.json();
+                const totalIncome = monthlyTransactions
+                    .filter(t => t.type === 'income')
+                    .reduce((sum, t) => sum + t.amount, 0);
+                const totalExpense = monthlyTransactions
+                    .filter(t => t.type === 'expense')
+                    .reduce((sum, t) => sum + t.amount, 0);
+                const netProfit = totalIncome - totalExpense;
+                const reportContent = document.getElementById('monthlyReportContent');
+                const sortedTransactions = monthlyTransactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                const transactionDetailsHtml = sortedTransactions.map(t => {
+                    const typeClass = t.type === 'income' ? 'income-value' : 'expense-value';
+                    // For income: Category shows "-", Location/Shop shows the category (location)
+                    // For expense: Category shows expense category, Location/Shop shows shop name
+                    const category = t.type === 'income' ? '-' : (t.category || 'N/A');
+                    const locationShop = t.type === 'income' ? (t.category || 'N/A') : (t.shop_name || 'N/A');
+
+                    return `
+                        <tr>
+                            <td>${t.date}</td>
+                            <td>${t.type.toUpperCase()}</td>
+                            <td>${category}</td>
+                            <td>${locationShop}</td>
+                            <td class="rupee-symbol ${typeClass}">${t.amount.toFixed(2)}</td>
+                            <td>${t.unit || 'N/A'}</td>
+                            <td>${t.qty ? t.qty.toFixed(2) : 'N/A'}</td>
+                        </tr>
+                    `;
+                }).join('');
+
+                reportContent.innerHTML = `
+                    <div class="summary-cards" style="margin-top: 20px;">
+                        <div class="summary-card">
+                            <div class="summary-value income-value rupee-symbol">${totalIncome.toFixed(2)}</div>
+                            <div class="summary-label">Total Income</div>
+                        </div>
+                        <div class="summary-card">
+                            <div class="summary-value expense-value rupee-symbol">${totalExpense.toFixed(2)}</div>
+                            <div class="summary-label">Total Expenses</div>
+                        </div>
+                        <div class="summary-card">
+                            <div class="summary-value profit-value rupee-symbol">${netProfit.toFixed(2)}</div>
+                            <div class="summary-label">Net Profit/Loss</div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <h3>Daily Breakdown</h3>
+                        <table style="width: 100%; margin-top: 10px;">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Income</th>
+                                    <th>Expenses</th>
+                                    <th>Profit/Loss</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${generateDailyBreakdown(monthlyTransactions, year, monthNum)}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <h3>Transaction Details</h3>
+                        <table style="width: 100%; margin-top: 10px;">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Category</th>
+                                    <th>Location/Shop</th>
+                                    <th>Amount</th>
+                                    <th>Unit</th>
+                                    <th>Qty</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${transactionDetailsHtml || '<tr><td colspan="7" style="text-align: center; color: var(--gray);">No transactions for this month</td></tr>'}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error generating monthly report:', error);
+                document.getElementById('monthlyReportContent').innerHTML = '<p>Error generating report</p>';
+            }
+        }
+
+        // Generate daily breakdown for monthly report
+        function generateDailyBreakdown(monthlyTransactions, year, month) {
+            const daysInMonth = new Date(year, month, 0).getDate();
+            let html = '';
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const dayTransactions = monthlyTransactions.filter(t => t.date === date);
+                if (dayTransactions.length === 0) continue;
+                const dayIncome = dayTransactions
+                    .filter(t => t.type === 'income')
+                    .reduce((sum, t) => sum + t.amount, 0);
+                const dayExpense = dayTransactions
+                    .filter(t => t.type === 'expense')
+                    .reduce((sum, t) => sum + t.amount, 0);
+                const dayProfit = dayIncome - dayExpense;
+                html += `
+                    <tr>
+                        <td>${date}</td>
+                        <td class="rupee-symbol income-value">${dayIncome.toFixed(2)}</td>
+                        <td class="rupee-symbol expense-value">${dayExpense.toFixed(2)}</td>
+                        <td class="rupee-symbol ${dayProfit >= 0 ? 'income-value' : 'expense-value'}">${dayProfit.toFixed(2)}</td>
+                    </tr>
+                `;
+            }
+            return html || '<tr><td colspan="4" style="text-align: center; color: var(--gray);">No transactions for this month</td></tr>';
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = '/';
+            }
+        }
+
+        // Global click handler for modals
+        document.addEventListener('click', function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        });
+
+        // Close notification dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('notificationDropdown');
+            const bell = document.querySelector('.notification-bell');
+            if (dropdown.style.display === 'block' && !dropdown.contains(event.target) && !bell.contains(event.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+    </script>
+
+</body>
+</html>
