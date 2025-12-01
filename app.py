@@ -18,6 +18,7 @@ from collections import defaultdict
 from flask_cors import CORS
 import statistics
 
+
 def hide_console():
     """Hide console window in executable"""
     if os.name == 'nt':  # Windows
@@ -28,7 +29,6 @@ def hide_console():
 
 # Hide console immediately
 hide_console()
-
 
 
 # Fix for executable - get the correct path to resources
@@ -106,31 +106,39 @@ try:
 except Exception as e:
     print(f"✗ MongoDB connection failed: {e}")
 
+
     # -----------------------------------
     # Fallback dummy collections
     # -----------------------------------
     class DummyCollection:
         def find(self, *args, **kwargs): return []
+
         def find_one(self, *args, **kwargs): return None
 
         def insert_one(self, *args, **kwargs):
             class Result:
                 inserted_id = ObjectId()
+
             return Result()
 
         def update_one(self, *args, **kwargs):
             class Result:
                 modified_count = 1
+
             return Result()
 
         def delete_one(self, *args, **kwargs):
             class Result:
                 deleted_count = 1
+
             return Result()
 
         def distinct(self, *args, **kwargs): return []
+
         def create_index(self, *args, **kwargs): pass
+
         def aggregate(self, *args, **kwargs): return []
+
 
     transactions_collection = DummyCollection()
     user_collection = DummyCollection()
@@ -146,7 +154,6 @@ try:
     print("✓ Database indexes created for optimal performance")
 except Exception as e:
     print(f"Note: Index creation failed (may already exist): {e}")
-
 
 # Cache for frequently accessed data
 category_cache = {}
@@ -244,10 +251,12 @@ def get_cached_categories(category_type):
 
 def login_required(f):
     """Decorator to check if user is logged in"""
+
     def decorated_function(*args, **kwargs):
         if not session.get('logged_in'):
             return redirect(url_for('show_login'))
         return f(*args, **kwargs)
+
     decorated_function.__name__ = f.__name__
     return decorated_function
 
@@ -1326,17 +1335,24 @@ if __name__ == '__main__':
         os.makedirs('templates')
         print(f"Created templates directory")
 
-    # Start browser in a separate thread
-    if os.name == 'nt':  # Only open browser on Windows (for executable)
+    # Get port from environment variable (Render sets this) or default to 8000
+    port = int(os.environ.get('PORT', 8000))
+
+    # Use 0.0.0.0 for production, 127.0.0.1 for local development
+    # Check if we're running on Render (has RENDER environment variable) or other cloud
+    host = '0.0.0.0' if os.environ.get('RENDER') or os.environ.get('PORT') else '127.0.0.1'
+
+    # Only open browser for local development (Windows)
+    if os.name == 'nt' and host == '127.0.0.1':
         browser_thread = threading.Thread(target=open_browser, daemon=True)
         browser_thread.start()
 
-    print("Starting Ice Cream Shop Management System...")
+    print(f"Starting Ice Cream Shop Management System on {host}:{port}...")
     print("Press Ctrl+C to stop the server")
 
     # Run the application
     try:
-        app.run(debug=False, host='127.0.0.1', port=8000, threaded=True)
+        app.run(debug=False, host=host, port=port, threaded=True)
     except KeyboardInterrupt:
         print("\nServer stopped by user")
     except Exception as e:
