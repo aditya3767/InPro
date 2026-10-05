@@ -1,53 +1,23 @@
-# Hide console window for executable
-import ctypes
 import os
 import sys
 import urllib.parse
 from pymongo import MongoClient, ASCENDING, DESCENDING
 from bson import ObjectId
-import urllib.parse
-import os
 import threading
 import time
 import webbrowser
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session
-from pymongo import MongoClient, ASCENDING, DESCENDING
 from datetime import datetime, timedelta
-from bson import ObjectId
 from collections import defaultdict
 from flask_cors import CORS
 import statistics
 
 
-def hide_console():
-    """Hide console window in executable"""
-    if os.name == 'nt':  # Windows
-        ctypes.windll.user32.ShowWindow(ctypes.windll.kernel32.GetConsoleWindow(), 0)
-    elif os.name == 'posix':  # Linux/Mac
-        pass  # No need to hide on Linux/Mac
-
-
-# Hide console immediately
-hide_console()
-
-
-# Fix for executable - get the correct path to resources
-def resource_path(relative_path):
-    """Get absolute path to resource, works for dev and for PyInstaller"""
-    try:
-        # PyInstaller creates a temp folder and stores path in _MEIPASS
-        base_path = sys._MEIPASS
-    except Exception:
-        base_path = os.path.abspath(".")
-
-    return os.path.join(base_path, relative_path)
-
-
-# Create Flask app with proper template path
-template_dir = resource_path('templates') if hasattr(sys, '_MEIPASS') else 'templates'
+# ✅ FIXED: Absolute path to templates folder (works on Vercel & locally)
+template_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=template_dir)
 CORS(app)
-app.secret_key = 'your-secret-key-here'  # Required for session management
+app.secret_key = os.environ.get('SECRET_KEY', 'your-secret-key-here')  # Required for session management
 
 
 # Add cache control headers to disable caching
@@ -63,14 +33,16 @@ def add_header(response):
 
 
 # MongoDB connection with connection pooling and timeout settings
-
-
 try:
     # -------------------------
-    # Get username & password
+    # Get username & password (✅ FIXED: from environment only)
     # -------------------------
-    username = os.environ.get('MONGODB_USERNAME', 'adityabhoir983_db_user')
-    password = os.environ.get('MONGODB_PASSWORD', 'HiV2rwczhpH0Cpjq')
+    username = os.environ.get('MONGODB_USERNAME')
+    password = os.environ.get('MONGODB_PASSWORD')
+
+    if not username or not password:
+        raise ValueError("MONGODB_USERNAME and MONGODB_PASSWORD environment variables are required")
+
     encoded_password = urllib.parse.quote_plus(password)
 
     # -------------------------
@@ -92,7 +64,7 @@ try:
         socketTimeoutMS=30000,
         serverSelectionTimeoutMS=30000
     )
-    #
+
     # Test connection
     client.admin.command("ping")
 
@@ -105,7 +77,6 @@ try:
 
 except Exception as e:
     print(f"✗ MongoDB connection failed: {e}")
-
 
     # -----------------------------------
     # Fallback dummy collections
