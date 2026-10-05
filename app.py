@@ -92,7 +92,7 @@ try:
         socketTimeoutMS=30000,
         serverSelectionTimeoutMS=30000
     )
-
+    #
     # Test connection
     client.admin.command("ping")
 
